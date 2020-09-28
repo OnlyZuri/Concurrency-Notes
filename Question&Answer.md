@@ -47,6 +47,24 @@
 
 ### Question 6:what principles should we conform to utilize volatile precisely for describing variables?
 ### Answer ###
-*1、对变量的写入操作不依赖于变量的当前状态，或能保证只有单个线程更新变量的值*
-*2、该变量不会与其他状态变量一起纳入不变性条件中*
-*3、在访问变量时不需要加锁*
+*1、对变量的写入操作不依赖于变量的当前状态，或能保证只有单个线程更新变量的值*<br>
+*2、该变量不会与其他状态变量一起纳入不变性条件中*<br>
+*3、在访问变量时不需要加锁*<br>
+
+### Qusetion 7:what are the concept about publish and escape?
+### Answer ###
+*1、发布一个对象是指使对象能够在当前作用域之外的代码中使用*<br>
+*2、逸出是某个不该被发布的对象被错误的发布的现象*<br>
+### Knowledge Involved ###
+*1、常见的逸出现象——this引用逸出，即在构造函数中将this引用逸出，常见形式为在构造函数中创建并启动一个线程，或者调用一个可以改写的实例方法，都会使this引用错误的逸出，直到构造函数返回时才能保证后续的线程安全性*<br>
+
+### Question 8:how can we explain what thread confinement is?And how many methods can we realize the thread confinement?
+### Answer ###
+*1、线程封闭是实现线程安全性的最简单方式之一，就是不使用共享数据。即仅在单线程内访问数据，避免使用同步*<br>
+*2、线程封闭实现有三种方式：*<br>
+  *（1）、ad-hoc线程封闭，维护线程封闭的职责完全由程序实现来承担，如只有单线程对volatile变量执行写入操作。此类封闭较脆弱，一般不使用*<br>
+  *（2）、栈封闭，简单来说就是方法内的局部变量，只属于线程自己的栈内，其他线程无法访问到*<br>
+  *（3）、ThreadLocal封闭，为每个线程建立独立的数据副本，线程只能访问和使用自己的那份数据*<br>
+### Knowledge Involved ###
+*1、常见的使用线程封闭的例子有Swing和JDBC。Swing将组件和数据模型等封闭在事件分发线程中，其他线程不能访问这些对象；JDBC的连接保存到ThreadLocal对象中，每个线程拥有自己的连接*<br>
+*2、ThreadLocal常见的可用于连接管理，session管理*
