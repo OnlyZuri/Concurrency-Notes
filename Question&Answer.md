@@ -68,3 +68,8 @@
 ### Knowledge Involved ###
 *1、常见的使用线程封闭的例子有Swing和JDBC。Swing将组件和数据模型等封闭在事件分发线程中，其他线程不能访问这些对象；JDBC的连接保存到ThreadLocal对象中，每个线程拥有自己的连接*<br>
 *2、ThreadLocal常见的可用于连接管理，session管理*
+
+### Question 9:what is the immutable object?And how can it help us to satisfy the synchronization requirements?
+### Answer ###
+*1、如果一个对象被创建后，其状态就不能被改变，那么称它为不可变对象*<br>
+*2、*
