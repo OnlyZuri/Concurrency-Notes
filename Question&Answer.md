@@ -70,5 +70,8 @@
 
 ### Question 9:what is the immutable object?And how can it help us to satisfy the synchronization requirements?
 ### Answer ###
-*1、如果一个对象被创建后，其状态就不能被改变，那么称它为不可变对象*<br>
-*2、*
+*1、如果一个对象被创建后，其状态就不能被改变，那么称它为不可变对象，它必定是线程安全的。*<br>
+ *（1）、对象创建后其状态就不能被修改*
+ *（2）、对象的所有域都是final类型（非必要条件）*
+ *（3）、对象是正确创建的，即this引用未逸出*
+*2、使用volatile来发布不可变对象可实现一种弱形式的原子性，即对象是不可变的且被volatile修饰，虽然进行修改时直接使用重新创建一个新的对象*
