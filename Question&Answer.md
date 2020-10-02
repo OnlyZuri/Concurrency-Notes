@@ -95,3 +95,9 @@
 *1、不可变对象可以通过任何机制发布*<br>
 *2、事实不可变对象必须通过安全发布*<br>
 *3、可变对象除了需要安全发布，还必须是线程安全的或者由某个锁保护起来*
+
+### Chapter-Four Object Combination ###
+### Question 12:what is the instance confinement?And can you illustrate the java monitor model?
+### Answer
+*1、当对象被封装到另一个对象中时，能访问到被封装的对象的所有代码路径都是已知的，称之为实例封闭*<br>
+*2、将对象的所有状态都封装起来，并由自己的内置锁来保护的模式称之为Java监视器模式*<br>
