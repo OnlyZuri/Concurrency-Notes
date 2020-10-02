@@ -74,4 +74,24 @@
  *（1）、对象创建后其状态就不能被修改*<br>
  *（2）、对象的所有域都是final类型（非必要条件）*<br>
  *（3）、对象是正确创建的，即this引用未逸出*<br>
-*2、使用volatile来发布不可变对象可实现一种弱形式的原子性，即对象是不可变的且被volatile修饰，虽然进行修改时直接使用重新创建一个新的对象*<br>
+*2、使用volatile来发布不可变对象可实现一种弱形式的原子性，即对象是不可变的且被volatile修饰，需要进行修改时直接使用重新创建一个新的对象*<br>
+
+### Qusetion 10:how to publish object safely?what class can we utilize to publish our object?
+### Answer ###
+*1、要安全的发布一个对象，对象的引用和对象的状态必须同时对其他线程可见。一个正确创建的对象可以通过以下方式进行安全地分布：*<br>
+ *（1）、在静态初始化函数中初始化一个对象引用*<br>
+ *（2）、将对象的引用保存到volatile或者AtomicReference对象中*<br>
+ *（3）、将对象的引用保存到某个正确创建的对象的final域中*<br>
+ *（4）、将对象的引用保存到由锁保护的域中*<br>
+*2、线程安全库中的部分容器类，可用于安全发布*<br>
+ *（1）、键-值对类：SynchronizedMap、ConcurrentMap、HashTable*<br>
+ *（2）、数组类：Vector、SynchronizedList、SynchronizedSet、CopyOnWriteArrayList、CopyOnWriteArraySet*<br>
+ *（3）、队列类：BlockingQueue、ConcurrentLinkedQueue*<br>
+### Knowledge Involved ###
+*1、如果对象从技术上来看是可变的，但其状态在发布后不会再改变，则称之为事实不可变对象。在没有额外的同步的情况下，任何线程都可以安全的使用被安全发布的事实不可变对象*<br>
+
+### Question 11:why we can say that the object publishing requirement is depending on its variability?
+### Answer ###
+*1、不可变对象可以通过任何机制发布*<br>
+*2、事实不可变对象必须通过安全发布*<br>
+*3、可变对象除了需要安全发布，还必须是线程安全的或者由某个锁保护起来*
