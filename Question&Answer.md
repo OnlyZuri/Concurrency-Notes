@@ -114,3 +114,9 @@
 ### Answebrr
 *1、除开两种不常使用或难以实现的方法（修改原始的类、继承实现扩展这个类）之外，更常用的为现有线程安全类添加新功能模块的方式是将扩展代码放入一个客户端方法中，客户端对所使用的对象进行加锁，加锁对象应该为所使用的对象，而不是客户端对象本身*<br>
 *2、另一个更好的方法是组合，不采用在客户端上给对象加锁的形式，而是将对象封装到另一个类中，在该类中可以轻松实现同步，再提供访问途径，类似synchronizedList*<br>
+
+### Chapter-Five Basic Construction Module
+### Question 15:what is the synchronization container class?And what issues should we care for these classes?
+### Answer
+*1、常见的同步容器类包括Vector和HashTable，以及其他的同样由collections.synchronizedXxx等工厂方法创建的容器类。它们的共同特点是将自己的状态封装起来，对每个公有方法都进行同步，使得每次只有一个线程可以访问容器的状态。*<br>
+*2、*
