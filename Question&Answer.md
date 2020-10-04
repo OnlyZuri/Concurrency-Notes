@@ -138,3 +138,9 @@
 *2、ConcurrentHashMap和其他并发容器一样，提供弱一致性的迭代器。迭代器在创建时会遍历已有元素，在迭代过程中不会抛出ConcurrentModificationException，在迭代完成再将修改提交给容器。这种机制提高了并发性能，但也使size（）和isEmpty（）等方法变成不准确*<br>
 *3、因为其特性，ConcurrentHashMap不支持客户端加锁独占访问，因此独占的情况下考虑使用其他类。ConcurrentHashMap中提供了诸如putIfAbsent（）等复合操作，若需要实现新的功能，可以考虑使用其接口ConcurrentMap*<br>
 *4、CopyOnWrite类容器是读写分离的，并发的读不受限制，在写入操作时会生成一个新的副本，修改完成之后容器指向副本元素地址。与ConcurrentHashMap相同的是迭代过程中将直接使用原容器，因此迭代过程进行修改并不会抛出ConcurrentModificationException*
+
+### Question 18:how can we utilize BlockingQueue by producer-consumer model?
+### Answer 
+*1、阻塞队列BlockingQueue提供了可阻塞的put和take方法，以及支持定时可返回失败状态的offer和poll方法。通过设计生产者与消费者线程的比例来实现更高的资源使用率，灵活使用有界队列来防止生产者耗尽内存，采用非阻塞持久等待的offer等方法来处理负荷过载的情况*
+### Knowledge Involved
+*1、生产者消费者模式能简化开发过程，将消除两者的代码依赖性，使生产数据的过程和处理数据的过程解耦以简化工作负载（这两个过程处理速率不一致）*
