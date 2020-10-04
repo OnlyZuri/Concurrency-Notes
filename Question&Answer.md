@@ -141,6 +141,8 @@
 
 ### Question 18:how can we utilize BlockingQueue by producer-consumer model?
 ### Answer 
-*1、阻塞队列BlockingQueue提供了可阻塞的put和take方法，以及支持定时可返回失败状态的offer和poll方法。通过设计生产者与消费者线程的比例来实现更高的资源使用率，灵活使用有界队列来防止生产者耗尽内存，采用非阻塞持久等待的offer等方法来处理负荷过载的情况*
+*1、阻塞队列BlockingQueue提供了可阻塞的put和take方法，以及支持定时可返回失败状态的offer和poll方法。通过设计生产者与消费者线程的比例来实现更高的资源使用率，灵活使用有界队列来防止生产者耗尽内存，采用非阻塞持久等待的offer等方法来处理负荷过载的情况*<br>
+*2、阻塞队列能够更好的构建资源管理机制，其实现方式有LinkedBlockingQueue和ArrayBlockingQueue，均为FIFO队列，与linkedList和ArrayList相类似但拥有更好的并发性能。另一种实现方式是PriorityBlockingQueue，按优先级排序的队列。*<br>
+*最后一种是特殊的实现方式，同步队列SynchronousQueue。它本质上并不属于一个真正的队列，它并没有为元素维护存储空间，而是维护一组线程，由这组线程来直接将元素移入或移出，减去了存于数组再从数组中取出的过程。因为它没有存储功能，因此put和take方法将一直阻塞，直到有另一个线程准备好参与交付过程。仅当有足够多的消费者，且始终有一个消费者准备好获取交付的工作时才适合用同步队列*
 ### Knowledge Involved
 *1、生产者消费者模式能简化开发过程，将消除两者的代码依赖性，使生产数据的过程和处理数据的过程解耦以简化工作负载（这两个过程处理速率不一致）*
