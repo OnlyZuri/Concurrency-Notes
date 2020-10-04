@@ -118,5 +118,16 @@
 ### Chapter-Five Basic Construction Module
 ### Question 15:what is the synchronization container class?And what issues should we care for these classes?
 ### Answer
-*1、常见的同步容器类包括Vector和HashTable，以及其他的同样由collections.synchronizedXxx等工厂方法创建的容器类。它们的共同特点是将自己的状态封装起来，对每个公有方法都进行同步，使得每次只有一个线程可以访问容器的状态。*<br>
-*2、*
+*1、常见的同步容器类包括Vector和HashTable，以及其他的同样由collections.synchronizedXxx等工厂方法创建的容器类。它们的共同特点是将自己的状态封装起来，对每个公有方法都进行同步，使得每次只有一个线程可以访问容器的状态。值得注意的是，这虽然保证了线程安全性，但是却极大的削减了并发性能*<br>
+*2、同步容器类虽然定义了许多同步的原子方法，但进行组合成复合操作时仍然需要进行客户端加锁。其中，最需要注意的是容器类的迭代。当其他线程修改容器时，将会对容器的大小内容进行修改，此时迭代易得到失效值或超出容器下标界限ArrayIndexOutOfBoundsException等，依旧需要采用客户端加锁来保障迭代的正确进行。*<br>
+*3、同步容器类在迭代的过程中进行修改将会抛出并发修改错误ConcurrentModificationException。容器类迭代的标准方式都是使用Iterator，在容器类中将使用计数器对容器的修改进行感知和及时报错。一般的处理方式是对容器迭代过程进行加锁，但这种方式在容器内容多的情况下易造成长时间占用或死锁；另一中处理方式是进行复制，在副本上进行迭代，这种方式在容器内容多的情况下复制将存在显著的性能消耗。*<br>
+*4、除了常见的修改删除等方式，在同步容器的一些方式中存在着隐藏的迭代过程，如toString()，hashCode()，equals（）等方法，以及containsAll，removeAll，retainAll等方式都会隐式的进行迭代，都有可能抛出ConcurrentModificationException*
+
+### Question 16:what is the concurrent container classes?And what common classes we could utilize to satisfy high concurrency?
+### Answer
+*1、并发容器是在JDK5.0之后提出的，用于替代同步容器类，提供较好的并发性能的容器，针对多线程并发访问设计。*<br>
+*2、常见的并发容器替换同步容器如下：（具体内容等实践过来进行总结）*<br>
+ *（1）、ConcurrentHashMap替换Map*<br>
+ *（2）、CopyOnWriteArrayList/Set替换List/Set*<br>
+ *（3）、ConcurrentSkipListMap/Set替换SortedMap和SortedSet*<br>
+ *（4）、新增Queue和BlockingQueue，前者为队列，有ConcurrentLinkedQueue和PriorityQueue（非并发）两种实现方式，后者相较于前者多了可阻塞的获取和插入等操作*
