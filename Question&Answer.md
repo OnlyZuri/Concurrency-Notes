@@ -131,3 +131,10 @@
  *（2）、CopyOnWriteArrayList/Set替换List/Set*<br>
  *（3）、ConcurrentSkipListMap/Set替换SortedMap和SortedSet*<br>
  *（4）、新增Queue和BlockingQueue，前者为队列，有ConcurrentLinkedQueue和PriorityQueue（非并发）两种实现方式，后者相较于前者多了可阻塞的获取和插入等操作*
+
+### Question 17:how the concurrentHashMap and copyOnWriteArrayList help us to satisfy high concurrency?
+### Answer
+*1、ConcurrentHashMap不采用给所有方法加同步锁，而是采用更细的加锁机制，即分段锁来实现更大程度的共享。在这种机制下，执行读取操作的线程和执行写入操作的线程可以并发的访问Map，并且一定数量的写入线程可以并发的修改Map。*<br>
+*2、ConcurrentHashMap和其他并发容器一样，提供弱一致性的迭代器。迭代器在创建时会遍历已有元素，在迭代过程中不会抛出ConcurrentModificationException，在迭代完成再将修改提交给容器。这种机制提高了并发性能，但也使size（）和isEmpty（）等方法变成不准确*<br>
+*3、因为其特性，ConcurrentHashMap不支持客户端加锁独占访问，因此独占的情况下考虑使用其他类。ConcurrentHashMap中提供了诸如putIfAbsent（）等复合操作，若需要实现新的功能，可以考虑使用其接口ConcurrentMap*<br>
+*4、CopyOnWrite类容器是读写分离的，并发的读不受限制，在写入操作时会生成一个新的副本，修改完成之后容器指向副本元素地址。与ConcurrentHashMap相同的是迭代过程中将直接使用原容器，因此迭代过程进行修改并不会抛出ConcurrentModificationException*
