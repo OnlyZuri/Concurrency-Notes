@@ -165,3 +165,16 @@
  *（1）、传递中断异常InterruptException，将此异常传递给方法的调用者去处理。实现形式为不捕获此异常，或捕获后通过某种方式再次抛出此异常。*<br>
  *（2）、恢复中断，一些情况下不允许抛出异常，则必须捕获此异常，对当前线程调用interrupt方法恢复中断状态，使调用栈的更高层代码能够看到引发了一个中断*<br>
  *（3）、在对Thread进行扩展，并且能控制调用栈上所有更高层代码的时候，可考虑屏蔽中断，如捕获异常但不做出反应*
+
+### Question 22:what is the synchronous tools classes?And how can we utilize these common classes?
+### Answer
+*1、同步工具类封装了一些状态，并通过p-这些状态来协调线程是否执行还是等待，通过自身状态协调线程的控制流，如阻塞队列通过阻塞方法put和take来协调生产者-消费者线程*<br>
+*2、常见的一些同步工具类如下：*<br>
+ *（1）、闭锁，CountDownLatch。内部封装一个计数器，通过计数器来记录有多少个资源或操作在特定操作执行前必须实现。通过countDown（）表示一个资源或操作已实现，await（）方法等待直到计数器为0或者等待中的线程被中断、等待超时*<br>
+ *（2）、FutureTask，也可用作闭锁，相当于一个会返回结果的Runnable。创建FutureTask对象时设计返回类型和构造函数内实现Callable接口的call（）方法，将对象以Runnable相同方式存于Thread对象内运行，通过调用FutureTask对象的get（）方法可以达到阻塞线程目的，直到call（）方法执行完成。除了get（）阻塞方法会抛出的InterruptException异常之外，FutureTask所实现的call（）方法还会抛出ExecutionException。由于异常被封装为ExecutionException作为一个Throwable类返回，因此需要对其进行分析处理*<br>
+ *（3）、信号量，Semaphore。通过初始化构造许可资源的数量，在使用acquire（）阻塞直到获取许可，release（）释放以获取的许可来协调工作。使用Semaphore可以使任何一种容器变成有界阻塞容器，如数据库连接池一样。*<br>
+ *（4）、栅栏，CyclicBarrier。不同于闭锁CountDownLatch是等待事件或资源的实现后才执行线程接下来的操作，栅栏是多个线程在栅栏处汇集等待，直到所有线程都到达栅栏处，所有线程才开始各自的剩余操作。同时，闭锁CountDownLatch是一次性工具，栅栏可重复使用。通过await（）方法设立栅栏，当线程到达后将进入阻塞等待状态，直到所有线程到达栅栏处。阻塞释放后所有线程都将返回一个唯一的索引号，利用索引号可以产生领导线程完成特殊工作。或是在栅栏初始化构造时实现Runnable接口定义领导线程该做的事。<br>
+若await（）调用超时或阻塞线程被中断，所有阻塞的await（）调用线程将终止并抛出BrokenBarrierException。*<br>
+*（5）、另一种形式的栅栏是两端栅栏，Exchanger。各方在栅栏位置交换数据，尤其适用于两方执行不对称的操作时。*
+### Knowledge Involved
+*1、在不涉及I/O操作或共享数据访问的计算问题中，当线程数量为CPU数量或CPU数量+1时将获得最优的吞吐量（Runtime.getRuntime().avaliableProcessors()）*
