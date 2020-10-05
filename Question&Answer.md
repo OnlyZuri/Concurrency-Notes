@@ -159,10 +159,10 @@
 
 ### Question 21:how to understand the block and interrupt?
 ### Answer
-*1、线程可以被阻塞或暂停执行，当线程被阻塞时，会被挂为阻塞状态（BLOCKED，WAITING，TIMED_WAITING）。与之相联系的是InterruptException中断异常，当方法会抛出中断异常时，则表明该方法是一个阻塞方法，当其被中断时，它将努力提前结束阻塞状态*<br>
+*1、线程可以被阻塞或暂停执行，当线程被阻塞时，会被挂为阻塞状态（BLOCKED，WAITING，TIMED_WAITING）。与之相联系的是InterruptedException中断异常，当方法会抛出中断异常时，则表明该方法是一个阻塞方法，当其被中断时，它将努力提前结束阻塞状态*<br>
 *2、Thread类提供了interrupt方法，用于中断线程或查询线程是否已经被中断。线程利用一个布尔值来表示其中断状态。需要注意的是，中断是一种协作机制，一个线程并不能强制要求另一个线程中断其正在执行的某个操作。当A中断B时，A仅仅是要求B在执行到可暂停的位置去停止正在执行的操作，前提还是B同意被暂停。*<br>
-*3、当方法会抛出InterruptException异常时，则说明其为阻塞方法，则必须处理对中断的响应。常见的方式有以下几种：*
- *（1）、传递中断异常InterruptException，将此异常传递给方法的调用者去处理。实现形式为不捕获此异常，或捕获后通过某种方式再次抛出此异常。*<br>
+*3、当方法会抛出InterruptedException异常时，则说明其为阻塞方法，则必须处理对中断的响应。常见的方式有以下几种：*
+ *（1）、传递中断异常InterruptedException，将此异常传递给方法的调用者去处理。实现形式为不捕获此异常，或捕获后通过某种方式再次抛出此异常。*<br>
  *（2）、恢复中断，一些情况下不允许抛出异常，则必须捕获此异常，对当前线程调用interrupt方法恢复中断状态，使调用栈的更高层代码能够看到引发了一个中断*<br>
  *（3）、在对Thread进行扩展，并且能控制调用栈上所有更高层代码的时候，可考虑屏蔽中断，如捕获异常但不做出反应*
 
@@ -171,10 +171,103 @@
 *1、同步工具类封装了一些状态，并通过p-这些状态来协调线程是否执行还是等待，通过自身状态协调线程的控制流，如阻塞队列通过阻塞方法put和take来协调生产者-消费者线程*<br>
 *2、常见的一些同步工具类如下：*<br>
  *（1）、闭锁，CountDownLatch。内部封装一个计数器，通过计数器来记录有多少个资源或操作在特定操作执行前必须实现。通过countDown（）表示一个资源或操作已实现，await（）方法等待直到计数器为0或者等待中的线程被中断、等待超时*<br>
- *（2）、FutureTask，也可用作闭锁，相当于一个会返回结果的Runnable。创建FutureTask对象时设计返回类型和构造函数内实现Callable接口的call（）方法，将对象以Runnable相同方式存于Thread对象内运行，通过调用FutureTask对象的get（）方法可以达到阻塞线程目的，直到call（）方法执行完成。除了get（）阻塞方法会抛出的InterruptException异常之外，FutureTask所实现的call（）方法还会抛出ExecutionException。由于异常被封装为ExecutionException作为一个Throwable类返回，因此需要对其进行分析处理*<br>
+ *（2）、FutureTask，也可用作闭锁，相当于一个会返回结果的Runnable。创建FutureTask对象时设计返回类型和构造函数内实现Callable接口的call（）方法，将对象以Runnable相同方式存于Thread对象内运行，通过调用FutureTask对象的get（）方法可以达到阻塞线程目的，直到call（）方法执行完成。除了get（）阻塞方法会抛出的InterruptedException异常之外，FutureTask所实现的call（）方法还会抛出ExecutionException。由于异常被封装为ExecutionException作为一个Throwable类返回，因此需要对其进行分析处理*<br>
  *（3）、信号量，Semaphore。通过初始化构造许可资源的数量，在使用acquire（）阻塞直到获取许可，release（）释放以获取的许可来协调工作。使用Semaphore可以使任何一种容器变成有界阻塞容器，如数据库连接池一样。*<br>
  *（4）、栅栏，CyclicBarrier。不同于闭锁CountDownLatch是等待事件或资源的实现后才执行线程接下来的操作，栅栏是多个线程在栅栏处汇集等待，直到所有线程都到达栅栏处，所有线程才开始各自的剩余操作。同时，闭锁CountDownLatch是一次性工具，栅栏可重复使用。通过await（）方法设立栅栏，当线程到达后将进入阻塞等待状态，直到所有线程到达栅栏处。阻塞释放后所有线程都将返回一个唯一的索引号，利用索引号可以产生领导线程完成特殊工作。或是在栅栏初始化构造时实现Runnable接口定义领导线程该做的事。<br>
 若await（）调用超时或阻塞线程被中断，所有阻塞的await（）调用线程将终止并抛出BrokenBarrierException。*<br>
 *（5）、另一种形式的栅栏是两端栅栏，Exchanger。各方在栅栏位置交换数据，尤其适用于两方执行不对称的操作时。*
 ### Knowledge Involved
 *1、在不涉及I/O操作或共享数据访问的计算问题中，当线程数量为CPU数量或CPU数量+1时将获得最优的吞吐量（Runtime.getRuntime().avaliableProcessors()）*
+
+### Question 23:how to design an efficient and scalable result cache?
+### Answer
+*1、设计一个高效且可伸缩的结果缓存可以逐步优化并解决其中的问题：*<br>
+ *（1）、假定第一步，设计基础框架，由Map<K, V>保存相应处理结果*<br>
+```java
+public class Memorizer_1<K, V> implements Computable<K, V>{
+ private final Map<K, V> cache = new HashMap<K, V>();
+ private final Computable<K, V> c;  //表示包含一个需要长时间处理操作的接口
+ public Memorizer_1(Computable<K, V> c) {this.c = c;}
+ public synchronized V compute(K arg) throws InterruptedException{
+  V result = cache.get(arg);
+  if (result == null){
+   result = c.compute(arg);
+   cache.put(arg, result);
+  }
+  return result;
+ }
+}
+```
+ *（2）、可以看出使用HashMap作为缓存容器的一些限制：由于HashMap非线程安全，因此必须加锁保证，但是同时也导致了并发性能极差，每次只有一个线程可以访问这个方法，在极端情况下，有线程可能陷入长时间阻塞。为了去除这些限制，采用ConcurrentHashMap来做到多线程可访问。*<br>
+```java
+public class Memorizer_2<K, V> implements Computable<K, V>{
+ private final Map<K, V> cache = new ConcurrentHashMap<K, V>();
+ private final Computable c;
+ public Memorizer_2(Computable<K, V>) {this.c = c;}
+ public V compute(K arg) throws InterruptedException{
+  V result = cache.get(arg);
+  if (result == null){
+   result = c.compute(arg);
+   cache.put(arg, result);
+  }
+  return result;
+ }
+}
+```
+ *（3）、使用了ConcurrentHashMap之后解决了同时间只有一个线程可以访问此方法的限制，但也会有其余问题等待解决：如果两个线程一前一后处理同一个数据，且由于处理数据事件花费很长，因此我们希望后者能够知道已经有线程在处理相同的数据，而不是做重复的工作。考虑到这一点，可以使用FutureTask，每次要进行一个数据处理时先存入工作记录，告诉后来者已经有相同的工作在处理中。*<br>
+```java
+public class Memorizer_3<K, V> implements Computable<K, V>{
+ private final Map<K, Future<V>> cache = new ConcurrentHashMap<K, Future<V>>();
+ private final Computable<K, V> c;
+ public Memorizer_3(Computable<K, V> c) {this.c = c;}
+ public V compute(K arg) throws InterruptedException{
+  Future<V> f = cache.get(arg);
+  if (f == null){
+   Callable<V> eval = new Callable<V>(){
+    public V call() throws InterruptedException{
+     return c.compute(arg);
+    }
+   };
+   FutureTask<V> task = new FutureTask<V>(eval);
+   f = task;
+   cache.put(arg, f);
+   task.run();
+  }
+  try{
+   return f.get();
+  }catch (ExecutionException e){
+   // 处理执行异常，分析是何种异常进行相应处理
+  }
+ }
+}
+```
+ *(4)、可以看到使用了ConcurrentHashMap和FutureTask后，并发性能和重复工作得到了减少。但是需要注意的是，由于Future的“先判断后执行”并不是一个原子操作，因此还是存在有进行重复工作的可能，只是概率较之前的低。且由于ConcurrentHashMap不允许客户端加锁，因此可采用其提供的原子操作putIfAbsent（）方法。相比较于第三种方案，区别在于一开始获取不到相应任务时，添加工作记录采用putIfAbsent（）方法，如果没有同一时刻有别的线程添加了工作记录，才执行task.run（）长时间处理操作，减少了不必要的task.run()过程。*<br>
+```java
+public class Memorizer_final<K, V> implements Computable<K, V>{
+ private final Map<K, Future<V>> cache = new ConcurrentHashMap<K, Future<V>>();
+ private final Computable<K, V> c;
+ public Memorizer_final(Computable<K, V> c) {this.c = c;}
+ public V compute(K arg) throws InterruptedException{
+  Future<V> f = cache.get(arg);
+  if(f == null){
+   Callable<V> eval = new Callable<V>(){
+    public V call() throws InterruptedException{
+     return c.compute(arg);
+    }
+   };
+   FutureTask<V> task = new FutureTask<V>(eval);
+   f = cache.putIfAbsent(arg, task);
+   if (f == null) { f = task;task.run(); }
+  }
+  try{
+   return f.get();
+  }catch (ExecutionExceotion e){
+   // 处理异常，cache.remove(arg, f);
+  }
+ }
+}
+```
+ *（5）除了以上几个处理外，还需要考虑出现异常的情况。如FutureTask的执行过程中出现异常，应及时删除工作记录，以免造成缓存污染，返回问题数据。同时也应考虑缓存的存在时间限制，可考虑使用FutureTask的子类来解决，在子类中为每个结果指定一个逾期时间，定期扫描逾期元素并移除。*
+### Knowledge Involved
+*1、可伸缩性是指，当增加计算机资源（如CPU，内存，存储容量或I/O带宽）时，程序的吞吐量或处理能力响应的增加*<br>
+*2、Future是一个接口，FutureTask实现了此接口和Runnable接口，可以直接存于Thread类对象中*
