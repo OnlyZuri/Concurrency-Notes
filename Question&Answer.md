@@ -270,4 +270,5 @@ public class Memorizer_final<K, V> implements Computable<K, V>{
  *（5）除了以上几个处理外，还需要考虑出现异常的情况。如FutureTask的执行过程中出现异常，应及时删除工作记录，以免造成缓存污染，返回问题数据。同时也应考虑缓存的存在时间限制，可考虑使用FutureTask的子类来解决，在子类中为每个结果指定一个逾期时间，定期扫描逾期元素并移除。*
 ### Knowledge Involved
 *1、可伸缩性是指，当增加计算机资源（如CPU，内存，存储容量或I/O带宽）时，程序的吞吐量或处理能力响应的增加*<br>
-*2、Future是一个接口，FutureTask实现了此接口和Runnable接口，可以直接存于Thread类对象中*
+*2、Future是一个接口，FutureTask实现了此接口和Runnable接口，可以直接存于Thread类对象中，也可以直接run（）执行*
+
