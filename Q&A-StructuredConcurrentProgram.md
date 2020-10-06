@@ -69,3 +69,9 @@ public interface ExecutorService extends Executor{
  ...
 }
 ```
+
+### Question 5:why should we utilize SchedulerThreadPoolExecutor rather than Timer?
+### Answer
+*1、Timer在执行所有定时任务时只会创建一个线程，若某个定时任务的执行时间太长，将导致其他TimerTask丢失，或被连续调用，丧失定时精确性。而且，Timer不捕获异常，抛出未检查的异常时将终止定时线程，也不会恢复线程的执行，新任务也无法被调度。*<br>
+*2、SchedulerThreadPoolExecutor是基于相对时间调度的，而Timer是基于绝对时间调度的。*<br>
+*3、如果需要构建自己的调度服务，可以使用DelayQueue，它实现了无边界的BlockingQueue，并为SchedulerThreadPoolExecutor提供调度功能。内部管理着一组Delayed对象，对应相应的延迟时间。只有某个元素逾期后，才能从DelayQueue中执行take操作，从DelayQueue中返回的对象是按延迟时间进行排序的*
