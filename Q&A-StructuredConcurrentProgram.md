@@ -51,4 +51,21 @@ public class SerialExecutor implements Executor{
   *（2）、newCacheThreadPool，创建可缓存的线程池，当处理需求规模小于线程规模时，将回收空闲线程，当需求大于线程规模时，将创建新线程，线程池规模不存在任何限制（小心内存耗尽）*<br>
   *（3）、newSingleThreadExecutor，创建单线程池的Executor，即串行执行任务，可保证按照顺序来执行（FIFO，优先级等限制）。当前线程异常结束时会生成新线程替代。*<br>
   *（4）、newScheduledThreadPool，创建固定数量的线程池，但可以用延迟或定时的方式来执行任务*<br>
-  
+ 
+### Question 4:how can the executor close?
+### Answer
+*1、由于JVM等待所有（非守护）线程关闭后才能退出，因此Executor的正确关闭将影响到JVM是否正常退出。*<br>
+*2、为了解决执行服务的生命周期问题，Executor扩展了ExecutorService接口，添加了一些生命周期管理的方法。*<br>
+ *（1）、ExecutorService的生命周期有三种状态，运行、关闭和已终止。*<br>
+ *（2）、在ExecutorService关闭后提交的任务将由拒绝执行处理器Rejected Execution Handler来处理，它会抛弃任务，或使execute方法抛出RejectedExecutionException。*<br>
+ *（3）、所有任务执行完成后，ExecutorService将进入终止状态。可以调用awaitTermination来等待进入终止状态，或者调用isTerminated来轮询是否已终止。通常在awaitTermination之后立即调用shutdown可以同步达到关闭ExecutorService的效果*
+```java
+public interface ExecutorService extends Executor{
+ void shutdown();
+ List<Runnable> shutdownNow();
+ boolean isShutdown();
+ boolean isTerminated();
+ boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException;
+ ...
+}
+```
